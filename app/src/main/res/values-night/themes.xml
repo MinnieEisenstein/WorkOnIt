@@ -1,7 +1,38 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.WorkOnIt" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+    <!-- Night mode theme -->
+    <style name="Theme.WorkOnIt" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- darker versions of your brand colors -->
+        <item name="colorPrimary">#D981A3</item> <!-- deeper pink -->
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+        <item name="colorSecondary">#7BC7B3</item> <!-- deeper mint -->
+        <item name="colorOnSecondary">#0F0F0F</item>
+
+        <!-- dark surfaces/backgrounds -->
+        <item name="android:colorBackground">#101014</item>
+        <item name="colorOnBackground">#EDEDED</item>
+
+        <item name="colorSurface">#181A1F</item>
+        <item name="colorOnSurface">#E6E6E6</item>
+
+        <!-- status bar -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- typography hooks (match day theme names) -->
+        <item name="textAppearanceHeadlineMedium">@style/WorkOnItHeadline.Night</item>
+        <item name="textAppearanceBodyMedium">@style/WorkOnItBody.Night</item>
     </style>
+
+    <style name="WorkOnItHeadline.Night" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textColor">#FFA3BF</item> <!-- soft pink highlight -->
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="WorkOnItBody.Night" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">#DADADA</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
 </resources>

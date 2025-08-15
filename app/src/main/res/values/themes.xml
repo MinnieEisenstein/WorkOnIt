@@ -1,9 +1,42 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.WorkOnIt" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <!-- Base app theme -->
+    <style name="Theme.WorkOnIt" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">#F9B5D0</item> <!-- soft pink -->
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+        <!-- Secondary color -->
+        <item name="colorSecondary">#B5EAD7</item> <!-- mint green -->
+        <item name="colorOnSecondary">#000000</item>
+
+        <!-- Background color -->
+        <item name="android:colorBackground">#FFF8F9</item> <!-- off-white/pastel -->
+        <item name="colorOnBackground">#333333</item>
+
+        <!-- Surface colors (cards, toolbars, etc.) -->
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#333333</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Use Material3 typography -->
+        <item name="textAppearanceHeadlineMedium">@style/WorkOnItHeadline</item>
+        <item name="textAppearanceBodyMedium">@style/WorkOnItBody</item>
     </style>
 
-    <style name="Theme.WorkOnIt" parent="Base.Theme.WorkOnIt" />
+    <!-- Headline text style -->
+    <style name="WorkOnItHeadline" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textColor">#FF6F91</item> <!-- darker pink -->
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Body text style -->
+    <style name="WorkOnItBody" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">#555555</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
 </resources>

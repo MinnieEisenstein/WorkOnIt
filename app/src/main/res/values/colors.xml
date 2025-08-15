@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#FFC7D9</color>      <!-- light pink -->
+    <color name="colorOnPrimary">#FFFFFF</color>    <!-- white text on primary -->
+    <color name="colorSecondary">#BEE6E2</color>    <!-- mint -->
+    <color name="colorTertiary">#FBECCB</color>     <!-- soft peach -->
+    <color name="colorSurface">#FFF7FB</color>      <!-- off‑white pink -->
+    <color name="colorOnSurface">#333333</color>    <!-- dark gray -->
 </resources>
