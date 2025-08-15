@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WorkOnIt</string>
+    <string name="add">add</string>
+    <string name="dashboard_coming_soon">dashboard coming soon…</string>
 </resources>
