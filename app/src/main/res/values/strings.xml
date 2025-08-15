@@ -2,4 +2,6 @@
     <string name="app_name">WorkOnIt</string>
     <string name="add">add</string>
     <string name="dashboard_coming_soon">dashboard coming soon…</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
 </resources>
