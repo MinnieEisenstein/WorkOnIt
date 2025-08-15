@@ -7,4 +7,8 @@
     <string name="about_info">WorkOnIt helps you set weekly goals, track daily habits, get AI motivation, and do a quick nightly review.</string>
     <string name="short_about">build healthy habits, break negative ones</string>
     <string name="work_onit">WorkOnIt</string>
+    <string name="daily_quote">Daily quote</string>
+    <string name="daily_review_reminder_time">Daily review reminder time</string>
+    <string name="_9_30_pm">9:30 PM</string>
+    <string name="quote_of_the_hour">Quote of the hour</string>
 </resources>
