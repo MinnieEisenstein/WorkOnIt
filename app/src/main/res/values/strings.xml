@@ -4,4 +4,7 @@
     <string name="dashboard_coming_soon">dashboard coming soon…</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
+    <string name="about_info">WorkOnIt helps you set weekly goals, track daily habits, get AI motivation, and do a quick nightly review.</string>
+    <string name="short_about">build healthy habits, break negative ones</string>
+    <string name="work_onit">WorkOnIt</string>
 </resources>

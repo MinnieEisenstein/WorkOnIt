@@ -1,5 +1,6 @@
 package com.example.workonit;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
                     "Settings (placeholder)", Snackbar.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.action_about) {
-            Snackbar.make(findViewById(R.id.root_coordinator),
-                    "About (placeholder)", Snackbar.LENGTH_SHORT).show();
+            startActivity(new Intent(this, AboutActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
