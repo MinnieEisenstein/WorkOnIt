@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".AddGoalActivity">
 
+    <!-- App bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -16,94 +17,357 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            app:navigationIcon="?attr/homeAsUpIndicator"
             app:title="Add Goal"
             app:titleCentered="true"
             app:titleTextColor="@android:color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
+            android:id="@+id/container_all_steps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- goal name -->
-            <com.google.android.material.textfield.TextInputLayout
+            <!-- Step indicator -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progress_steps"
+                style="@style/Widget.Material3.LinearProgressIndicator"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="goal name">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/input_goal_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="8dp"
+                android:progress="33"
+                app:trackCornerRadius="8dp"
+                android:indeterminate="false" />
 
-            <!-- goal type: positive / negative -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="type" />
-
-            <RadioGroup
-                android:id="@+id/group_goal_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <RadioButton
-                    android:id="@+id/radio_positive"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="positive"
-                    android:checked="true" />
-                <RadioButton
-                    android:id="@+id/radio_negative"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="negative" />
-            </RadioGroup>
-
-            <!-- weekly target -->
-            <com.google.android.material.textfield.TextInputLayout
+            <!-- ============ STEP 1: Type & Duration ============ -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/step1_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="times per week">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/input_times_per_week"
+                app:cardCornerRadius="16dp"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="2dp">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-            <!-- action buttons -->
-            <LinearLayout
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Step 1 of 3"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="What kind of goal is this?" />
+
+                    <!-- Stop vs Start -->
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/group_goal_kind"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:singleSelection="true"
+                        app:selectionRequired="true">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_kind_start"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Make part of life" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_kind_stop"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Stop doing this" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                    <!-- Duration -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="How long do you want to work on it?" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chips_duration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_1_week"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:text="1 week"
+                            app:checkedIconVisible="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_1_month"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:text="1 month"
+                            app:checkedIconVisible="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_custom"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:text="Custom"
+                            app:checkedIconVisible="true" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <!-- Custom duration inputs (shown only if Custom is picked) -->
+                    <LinearLayout
+                        android:id="@+id/row_custom_duration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Number">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/input_custom_number"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="number" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:hint="Unit (weeks / months)">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/input_custom_unit"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="weeks" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <!-- Optional start date -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_pick_start_date"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Start date: Today" />
+
+                    <!-- Next -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_step1_next"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Next →" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ STEP 2: Sentence ============ -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/step2_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:cardCornerRadius="16dp"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="2dp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_cancel"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="cancel" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_save"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Step 2 of 3"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_sentence_prompt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Finish the sentence:" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:hint="In __ weeks I want to…">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/input_sentence_goal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:minLines="2" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/tv_sentence_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:alpha="0.8"
+                        tools:text="Preview: In 4 weeks I want to drink water daily." />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_step2_back"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="← Back" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_step2_next"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:text="Next →" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ STEP 3: Details & Save ============ -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/step3_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:cardCornerRadius="16dp"
+                app:cardUseCompatPadding="true"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="12dp"
-                    android:text="save" />
-            </LinearLayout>
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Step 3 of 3"
+                        android:textStyle="bold" />
+
+                    <!-- Goal name -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:hint="Goal name">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/input_goal_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Weekly target -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Times per week (optional)">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/input_times_per_week"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Notes -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Notes (optional)">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/input_notes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:minLines="2" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Actions -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_step3_back"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="← Back" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_save"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:text="Save goal" />
+                    </LinearLayout>
+
+                    <!-- Cancel -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_cancel"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Cancel" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </ScrollView>

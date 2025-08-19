@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -15,13 +16,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.workonit.model.Goal;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -35,14 +41,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import ui.GoalsAdapter;
-import com.example.workonit.model.Goal;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -102,11 +101,49 @@ public class MainActivity extends AppCompatActivity {
         loadGoals();
         updateList(goals);
 
+        // quick actions from the 3‑dot menu
+        adapter.setOnGoalAction(new GoalsAdapter.OnGoalAction() {
+            @Override public void onActivate(Goal goal) {
+                goal.markActive();
+                saveGoals(); updateList(goals);
+                Snackbar.make(findViewById(R.id.root_coordinator), "Marked active", Snackbar.LENGTH_SHORT).show();
+            }
+            @Override public void onHold(Goal goal) {
+                goal.markOnHold();
+                saveGoals(); updateList(goals);
+                Snackbar.make(findViewById(R.id.root_coordinator), "Put on hold", Snackbar.LENGTH_SHORT).show();
+            }
+            @Override public void onComplete(Goal goal) {
+                goal.markCompleted();
+                saveGoals(); updateList(goals);
+                Snackbar.make(findViewById(R.id.root_coordinator), "Marked completed", Snackbar.LENGTH_SHORT).show();
+            }
+            @Override public void onExpire(Goal goal) {
+                goal.markExpired();
+                saveGoals(); updateList(goals);
+                Snackbar.make(findViewById(R.id.root_coordinator), "Marked expired", Snackbar.LENGTH_SHORT).show();
+            }
+            @Override public void onDelete(Goal goal) {
+                goals.remove(goal);
+                saveGoals(); updateList(goals);
+                Snackbar.make(findViewById(R.id.root_coordinator), "Deleted", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
         adapter.setOnGoalClick(goal -> {
             Intent intent = new Intent(MainActivity.this, GoalDetailActivity.class);
             intent.putExtra("goal", goal);
             startActivity(intent);
         });
+
+        // big FAB → add goal
+        ExtendedFloatingActionButton fab = findViewById(R.id.fab_add);
+        if (fab != null) {
+            fab.setOnClickListener(v -> {
+                Intent i = new Intent(MainActivity.this, AddGoalActivity.class);
+                addGoalLauncher.launch(i);
+            });
+        }
 
         addGoalLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -131,13 +168,21 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        FloatingActionButton fab = findViewById(R.id.fab_add);
-        if (fab != null) {
-            fab.setOnClickListener(v -> {
-                Intent i = new Intent(MainActivity.this, AddGoalActivity.class);
-                addGoalLauncher.launch(i);
-            });
-        }
+        // --- NEW: category buttons ---
+        findViewById(R.id.btn_on_hold).setOnClickListener(v ->
+                openFiltered(Goal.Status.ON_HOLD, "On‑hold goals"));
+        findViewById(R.id.btn_completed).setOnClickListener(v ->
+                openFiltered(Goal.Status.COMPLETED, "Completed goals"));
+        findViewById(R.id.btn_expired).setOnClickListener(v ->
+                openFiltered(Goal.Status.EXPIRED, "Expired goals"));
+        // -----------------------------
+    }
+
+    private void openFiltered(Goal.Status status, String title) {
+        Intent i = new Intent(this, FilteredGoalsActivity.class); // we create next
+        i.putExtra("status", status.name());
+        i.putExtra("title", title);
+        startActivity(i);
     }
 
     @Override
@@ -234,9 +279,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String fetchAiQuote() {
         try {
-            // build prompt with guidelines to keep it short and appropriate
             String system = "You generate brief, wholesome, motivational quotes suitable for a frum/Jewish audience. " +
-                    "Keep to 1 -2 sentences. No emojis. Respect modesty and general Torah values, but the quote can be from a secular source. Make sure to credit the person it is quoted from.";
+                    "Keep to 1-2 sentences. No emojis. Respect modesty and general Torah values, but the quote can be from a secular source. Make sure to credit the person it is quoted from.";
             String user = "Give one original motivational quote. If you echo sources, paraphrase with attribution.";
 
             JSONObject root = new JSONObject();
@@ -275,27 +319,25 @@ public class MainActivity extends AppCompatActivity {
                 if (choices != null && choices.length() > 0) {
                     JSONObject msg = choices.getJSONObject(0).getJSONObject("message");
                     String content = msg.optString("content", "").trim();
-                    // one line only
                     if (content.contains("\n")) content = content.split("\n")[0].trim();
                     if (content.length() > 120) content = content.substring(0, 120).trim();
                     return content;
                 }
             }
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) { }
         return null;
     }
 
-    // ===== Existing list code (unchanged) =====
+    // ===== list helpers =====
 
     private void updateList(List<Goal> goals) {
         adapter.submitList(goals);
         if (goals == null || goals.isEmpty()) {
-            rv.setVisibility(RecyclerView.GONE);
-            emptyView.setVisibility(TextView.VISIBLE);
+            rv.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
         } else {
-            rv.setVisibility(RecyclerView.VISIBLE);
-            emptyView.setVisibility(TextView.GONE);
+            rv.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
         }
     }
 

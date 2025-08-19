@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WorkOnIt">
         <activity
+            android:name=".FilteredGoalsActivity"
+            android:exported="false" />
+        <activity
             android:name=".QuoteUtils"
             android:exported="false" />
         <activity

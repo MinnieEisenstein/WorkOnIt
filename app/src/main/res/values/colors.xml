@@ -6,4 +6,10 @@
     <color name="colorTertiary">#FBECCB</color>     <!-- soft peach -->
     <color name="colorSurface">#FFF7FB</color>      <!-- off‑white pink -->
     <color name="colorOnSurface">#333333</color>    <!-- dark gray -->
+
+    <color name="goal_active">#2E7D32</color>      <!-- green 800 -->
+    <color name="goal_on_hold">#F9A825</color>     <!-- amber 800 -->
+    <color name="goal_completed">#1565C0</color>   <!-- blue 800 -->
+    <color name="goal_expired">#C62828</color>     <!-- red 800 -->
+    <color name="goal_card_bg">#FFFFFFFF</color>   <!-- optional explicit bg -->
 </resources>

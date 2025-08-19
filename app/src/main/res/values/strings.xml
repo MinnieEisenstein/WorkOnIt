@@ -46,4 +46,5 @@ Data &amp; privacy:\n
 Credits:\n
 Built for the Android term project—multiple activities, toolbar menus, state restore, and a clean UI for everyday use.
 </string>
+    <string name="more_options">More Options</string>
 </resources>
