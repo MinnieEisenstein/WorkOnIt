@@ -10,10 +10,13 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.WorkOnIt"
-        android:networkSecurityConfig="@xml/network_security_config">
+        android:theme="@style/Theme.WorkOnIt">
+        <activity
+            android:name=".QuoteUtils"
+            android:exported="false" />
         <activity
             android:name=".ProgressCalendarActivity"
             android:exported="false" />
@@ -41,7 +44,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

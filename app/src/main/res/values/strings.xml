@@ -4,12 +4,46 @@
     <string name="dashboard_coming_soon">dashboard coming soon…</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
-    <string name="about_info">WorkOnIt helps you set weekly goals, track daily habits, get AI motivation, and do a quick nightly review.</string>
-    <string name="short_about">build healthy habits, break negative ones</string>
-    <string name="work_onit">WorkOnIt</string>
     <string name="daily_quote">Daily quote</string>
     <string name="daily_review_reminder_time">Daily review reminder time</string>
     <string name="_9_30_pm">9:30 PM</string>
     <string name="quote_of_the_hour">Quote of the hour</string>
     <string name="no_goals_yet">no goals yet</string>
+
+    <string name="work_onit">WorkOnIt</string>
+
+    <string name="short_about">
+A simple habit &amp; goal tracker with notes, daily check-ins, progress ratings, a calendar view, and optional AI chizzuk for motivation.
+</string>
+
+    <string name="about_info">
+What is WorkOnIt?\n
+WorkOnIt helps you build (or break) habits with the least friction: add a goal, jot quick notes, mark today as done, rate your day, and—when you need it—get a short boost of AI chizzuk.\n\n
+
+How to use it (quick start):\n
+• Add a goal: tap the + on the main screen → give it a name → choose Type:\n
+  • Positive = do this (e.g., “learn 15 min”).\n
+  • Negative = avoid this (e.g., “no late scrolling”).\n
+  • Set “times/week” as a target (optional) and save.\n
+• Goal details:\n
+  • Notes: write anything you want to remember or reflect on.\n
+  • Did you achieve today? tick the checkbox when you’ve done/avoided it.\n
+  • Get Chizzuk 💪: tap to generate a short, warm encouragement (notes help tailor it).\n
+  • Rate Progress: slide Difficulty, Motivation, and Success (0–10) for today.\n
+• Calendar:\n
+  • View past days and see saved ratings for any date.\n
+  • Tap “Rate this day” to log a rating for a specific date.\n\n
+
+Tips:\n
+• Keep goal names short and specific (e.g., “walk 10 min”).\n
+• Use Notes to capture patterns or triggers.\n
+• “Times/week” is a guide—no hard enforcement—so be honest and kind to yourself.\n\n
+
+Data &amp; privacy:\n
+• Your notes, checkboxes, and ratings are stored locally on your device (SharedPreferences).\n
+• AI chizzuk is generated online; an internet connection is required when you tap it.\n\n
+
+Credits:\n
+Built for the Android term project—multiple activities, toolbar menus, state restore, and a clean UI for everyday use.
+</string>
 </resources>

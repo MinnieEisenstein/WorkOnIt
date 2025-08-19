@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- app bar with toolbar (visible colors so preview isn't "blank") -->
+    <!-- app bar with toolbar -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -22,7 +22,7 @@
             app:titleTextColor="@android:color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- your original content, unchanged, now scrolls under the app bar -->
+    <!-- content under app bar -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
@@ -30,29 +30,65 @@
         android:padding="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <!-- guideline marking 25% height -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.25" />
+
+        <!-- quote area (top quarter) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/quote_card"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="12dp"
+            app:cardUseCompatPadding="true"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/guideline_25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/quote_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp"
+                android:text="Loading quote…"
+                android:textSize="18sp"
+                android:textStyle="italic"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- list below quote -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_goals"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline_25"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:listitem="@layout/row_goal" />
 
+        <!-- empty state centered inside the list area -->
         <TextView
             android:id="@+id/empty_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_goals_yet"
             android:textSize="18sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@id/recycler_goals"
+            app:layout_constraintBottom_toBottomOf="@id/recycler_goals"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- floating action button: we'll use it to add a goal later -->
+    <!-- add goal button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"

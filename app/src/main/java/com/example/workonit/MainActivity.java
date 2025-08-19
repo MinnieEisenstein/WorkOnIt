@@ -1,9 +1,9 @@
 package com.example.workonit;
 
-
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -23,17 +23,26 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import ui.GoalsAdapter;
 import com.example.workonit.model.Goal;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,8 +51,30 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rv;
     private TextView emptyView;
     private final List<Goal> goals = new ArrayList<>();
-    private static final String PREFS = "workonit_prefs";
 
+    private static final String PREFS = "workonit_prefs";
+    private static final String PREF_HOURLY_QUOTES = "pref_hourly_quotes";
+    private static final String PREF_DAILY_QUOTE  = "pref_daily_quote";
+
+    // cache keys
+    private static final String PREF_QUOTE_CACHE_TEXT = "quote_cache_text";
+    private static final String PREF_QUOTE_CACHE_KEY  = "quote_cache_key";
+
+    // ***** DEMO ONLY: store your key in local.properties → OPENAI_API_KEY=sk-... then read via BuildConfig *****
+    // TODO: move this to your own backend to avoid shipping an API key inside the app.
+    private static final String OPENAI_API_KEY = BuildConfig.OPENAI_API_KEY; // define in gradle
+    private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
+    private static final String OPENAI_MODEL = "gpt-4o-mini"; // small, fast, good enough for short quotes
+
+    // UI + schedule
+    private TextView quoteText;
+    private final Handler quoteHandler = new Handler();
+    private final Runnable quoteTick = new Runnable() {
+        @Override public void run() {
+            refreshQuote();
+            quoteHandler.postDelayed(this, millisUntilNextBoundary());
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +82,17 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // window insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // toolbar
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // recycler setup
+        quoteText = findViewById(R.id.quote_text);
+
         rv = findViewById(R.id.recycler_goals);
         emptyView = findViewById(R.id.empty_view);
 
@@ -70,8 +100,6 @@ public class MainActivity extends AppCompatActivity {
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
         loadGoals();
-
-
         updateList(goals);
 
         adapter.setOnGoalClick(goal -> {
@@ -89,9 +117,8 @@ public class MainActivity extends AppCompatActivity {
                         String type  = data.getStringExtra("goal_type");
                         int times    = data.getIntExtra("times_per_week", 0);
 
-                        Goal.Type goalType = type.equalsIgnoreCase("positive")
-                                ? Goal.Type.POSITIVE
-                                : Goal.Type.NEGATIVE;
+                        Goal.Type goalType = "positive".equalsIgnoreCase(type)
+                                ? Goal.Type.POSITIVE : Goal.Type.NEGATIVE;
 
                         Goal newGoal = new Goal(name, goalType, times, System.currentTimeMillis());
                         goals.add(newGoal);
@@ -104,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        // fab → open AddGoalActivity
         FloatingActionButton fab = findViewById(R.id.fab_add);
         if (fab != null) {
             fab.setOnClickListener(v -> {
@@ -113,6 +139,154 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshQuote();
+        quoteHandler.removeCallbacks(quoteTick);
+        quoteHandler.postDelayed(quoteTick, millisUntilNextBoundary());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        quoteHandler.removeCallbacks(quoteTick);
+    }
+
+    // ===== Quote logic (AI) =====
+
+    private enum Period { HOUR, DAY }
+
+    private Period getPeriodFromPrefs() {
+        SharedPreferences p = getSharedPreferences(PREFS, MODE_PRIVATE);
+        boolean hourly = p.getBoolean(PREF_HOURLY_QUOTES, false);
+        boolean daily  = p.getBoolean(PREF_DAILY_QUOTE,  true);
+        return hourly ? Period.HOUR : (daily ? Period.DAY : Period.DAY);
+    }
+
+    private String currentKey() {
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int day = c.get(Calendar.DAY_OF_YEAR);
+        if (getPeriodFromPrefs() == Period.HOUR) {
+            int hr = c.get(Calendar.HOUR_OF_DAY);
+            return String.format(Locale.US, "Y%04d-D%03d-H%02d", year, day, hr);
+        } else {
+            return String.format(Locale.US, "Y%04d-D%03d", year, day);
+        }
+    }
+
+    private long millisUntilNextBoundary() {
+        Calendar now = Calendar.getInstance();
+        Calendar next = (Calendar) now.clone();
+        if (getPeriodFromPrefs() == Period.HOUR) {
+            next.add(Calendar.HOUR_OF_DAY, 1);
+            next.set(Calendar.MINUTE, 0);
+        } else {
+            next.add(Calendar.DAY_OF_YEAR, 1);
+            next.set(Calendar.HOUR_OF_DAY, 0);
+            next.set(Calendar.MINUTE, 0);
+        }
+        next.set(Calendar.SECOND, 0);
+        next.set(Calendar.MILLISECOND, 0);
+        long diff = next.getTimeInMillis() - now.getTimeInMillis();
+        return Math.max(1000L, diff);
+    }
+
+    private void refreshQuote() {
+        if (quoteText == null) return;
+
+        SharedPreferences p = getSharedPreferences(PREFS, MODE_PRIVATE);
+        String keyWanted = currentKey();
+        String cachedKey = p.getString(PREF_QUOTE_CACHE_KEY, null);
+        String cachedText = p.getString(PREF_QUOTE_CACHE_TEXT, null);
+
+        if (cachedText != null && keyWanted.equals(cachedKey)) {
+            quoteText.setText(cachedText);
+            return;
+        }
+
+        quoteText.setText("…thinking of something uplifting…");
+
+        // fetch on background thread (no external libs)
+        new Thread(() -> {
+            String ai = fetchAiQuote();
+            if (ai == null || ai.trim().isEmpty()) {
+                ai = "Trust in Hashem and keep doing good.";
+            }
+            String finalAi = ai.trim();
+
+            // cache
+            getSharedPreferences(PREFS, MODE_PRIVATE)
+                    .edit()
+                    .putString(PREF_QUOTE_CACHE_KEY, keyWanted)
+                    .putString(PREF_QUOTE_CACHE_TEXT, finalAi)
+                    .apply();
+
+            runOnUiThread(() -> {
+                if (!isFinishing() && quoteText != null) {
+                    quoteText.setText(finalAi);
+                }
+            });
+        }).start();
+    }
+
+    private String fetchAiQuote() {
+        try {
+            // build prompt with guidelines to keep it short and appropriate
+            String system = "You generate brief, wholesome, motivational quotes suitable for a frum/Jewish audience. " +
+                    "Keep to 1 -2 sentences. No emojis. Respect modesty and general Torah values, but the quote can be from a secular source. Make sure to credit the person it is quoted from.";
+            String user = "Give one original motivational quote. If you echo sources, paraphrase with attribution.";
+
+            JSONObject root = new JSONObject();
+            root.put("model", OPENAI_MODEL);
+            JSONArray messages = new JSONArray();
+            messages.put(new JSONObject().put("role", "system").put("content", system));
+            messages.put(new JSONObject().put("role", "user").put("content", user));
+            root.put("messages", messages);
+            root.put("temperature", 0.8);
+
+            URL url = new URL(OPENAI_URL);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setConnectTimeout(10000);
+            con.setReadTimeout(15000);
+            con.setDoOutput(true);
+            con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            con.setRequestProperty("Authorization", "Bearer " + OPENAI_API_KEY);
+
+            OutputStream os = new BufferedOutputStream(con.getOutputStream());
+            os.write(root.toString().getBytes("UTF-8"));
+            os.flush();
+            os.close();
+
+            int code = con.getResponseCode();
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    code >= 200 && code < 300 ? con.getInputStream() : con.getErrorStream(), "UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) sb.append(line);
+            br.close();
+
+            if (code >= 200 && code < 300) {
+                JSONObject resp = new JSONObject(sb.toString());
+                JSONArray choices = resp.optJSONArray("choices");
+                if (choices != null && choices.length() > 0) {
+                    JSONObject msg = choices.getJSONObject(0).getJSONObject("message");
+                    String content = msg.optString("content", "").trim();
+                    // one line only
+                    if (content.contains("\n")) content = content.split("\n")[0].trim();
+                    if (content.length() > 120) content = content.substring(0, 120).trim();
+                    return content;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+
+    // ===== Existing list code (unchanged) =====
 
     private void updateList(List<Goal> goals) {
         adapter.submitList(goals);
@@ -143,6 +317,8 @@ public class MainActivity extends AppCompatActivity {
             goals.addAll(loaded);
         }
     }
+
+    // ===== Menu =====
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
