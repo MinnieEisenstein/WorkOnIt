@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_rate"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:title="Rate Progress"
+        app:titleTextColor="@android:color/white"
+        app:navigationIcon="?attr/homeAsUpIndicator" />
+
+    <TextView
+        android:id="@+id/tv_goal_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rate Progress"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <!-- difficulty -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="How difficult was it today?"
+        android:layout_marginTop="16dp" />
+    <SeekBar
+        android:id="@+id/sb_difficulty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="10" />
+    <TextView
+        android:id="@+id/tv_difficulty_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0" />
+
+    <!-- motivation -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="How motivated did you feel?"
+        android:layout_marginTop="16dp" />
+    <SeekBar
+        android:id="@+id/sb_motivation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="10" />
+    <TextView
+        android:id="@+id/tv_motivation_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0" />
+
+    <!-- success -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="How successful were you?"
+        android:layout_marginTop="16dp" />
+    <SeekBar
+        android:id="@+id/sb_success"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="10" />
+    <TextView
+        android:id="@+id/tv_success_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_submit_rating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Progress"
+        android:layout_marginTop="24dp" />
+</LinearLayout>

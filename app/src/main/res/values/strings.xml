@@ -11,4 +11,5 @@
     <string name="daily_review_reminder_time">Daily review reminder time</string>
     <string name="_9_30_pm">9:30 PM</string>
     <string name="quote_of_the_hour">Quote of the hour</string>
+    <string name="no_goals_yet">no goals yet</string>
 </resources>

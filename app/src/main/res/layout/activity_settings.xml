@@ -63,7 +63,17 @@
                 android:layout_height="wrap_content"
                 android:text="@string/_9_30_pm"
                 android:layout_marginTop="8dp" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_autosave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Auto-save last goal"
+                android:checked="true"
+                android:paddingVertical="8dp" />
         </LinearLayout>
     </ScrollView>
+
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

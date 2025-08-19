@@ -13,3 +13,36 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# keep gradle wrapper files tracked (gradlew, gradlew.bat, gradle/wrapper/**)
+
+# === Android Studio / IntelliJ ===
+*.iml
+.idea/
+
+# === Gradle / build output ===
+.gradle/
+**/build/
+.cxx/
+.externalNativeBuild/
+captures/
+outputs/
+
+# === Local config / secrets ===
+local.properties
+*.jks
+*.keystore
+app/google-services.json
+
+# === Artifacts ===
+*.apk
+*.ap_
+*.aab
+
+# === OS junk ===
+.DS_Store
+Thumbs.db
+
+# === Logs / misc ===
+*.log
+*.hprof
