@@ -25,8 +25,7 @@ import java.util.List;
 
 /**
  * A super-simple adapter for FilteredGoalsActivity.
- * - No headers, no grouping, no filtering — it just shows the list it’s given.
- * - Keeps the same row UI and 3‑dot actions as your main adapter.
+ * No headers; shows the list it’s given.
  */
 public class SimpleGoalsAdapter extends RecyclerView.Adapter<SimpleGoalsAdapter.VH> {
 
@@ -64,16 +63,13 @@ public class SimpleGoalsAdapter extends RecyclerView.Adapter<SimpleGoalsAdapter.
         final Goal g = items.get(position);
         final Context ctx = h.itemView.getContext();
 
-        // title
         h.tvTitle.setText(g.name);
 
-        // meta
+        // meta (REMOVED weekly target)
         String typeText = (g.type == Goal.Type.POSITIVE) ? "positive" : "negative";
-        String freqText = (g.timesPerWeek > 0) ? (g.timesPerWeek + "/week") : "no target yet";
         String dateText = DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date(g.createdAtUtc));
-        h.tvMeta.setText(typeText + " • " + freqText + " • created " + dateText);
+        h.tvMeta.setText(typeText + " • created " + dateText);
 
-        // status pill + card stroke
         Goal.Status status = (g.status != null) ? g.status : Goal.Status.ACTIVE;
         h.tvStatusPill.setText(status.name());
         @ColorInt int color = statusColor(ctx, status);
@@ -82,12 +78,10 @@ public class SimpleGoalsAdapter extends RecyclerView.Adapter<SimpleGoalsAdapter.
         h.card.setStrokeWidth(dp(ctx, 2));
         h.card.setCardBackgroundColor(ContextCompat.getColor(ctx, R.color.goal_card_bg));
 
-        // tap → open details (optional)
         h.itemView.setOnClickListener(v -> {
             if (onGoalClick != null) onGoalClick.onGoalClick(g);
         });
 
-        // 3‑dot menu
         h.btnMore.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(ctx, h.btnMore);
             MenuInflater inflater = popup.getMenuInflater();
@@ -126,7 +120,6 @@ public class SimpleGoalsAdapter extends RecyclerView.Adapter<SimpleGoalsAdapter.
         }
     }
 
-    // helpers
     private static int dp(Context ctx, int dp) {
         float density = ctx.getResources().getDisplayMetrics().density;
         return (int) (dp * density + 0.5f);

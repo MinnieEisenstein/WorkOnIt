@@ -32,13 +32,11 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- placeholders we’ll wire up later -->
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switch_hourly_quotes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/quote_of_the_hour"
-                android:checked="false"
                 android:paddingVertical="8dp" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
@@ -46,34 +44,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/daily_quote"
-                android:checked="true"
                 android:paddingVertical="8dp" />
 
-            <TextView
-                android:id="@+id/notification_time_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/daily_review_reminder_time"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp" />
-
-            <TextView
-                android:id="@+id/notification_time_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/_9_30_pm"
-                android:layout_marginTop="8dp" />
-
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/switch_autosave"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Auto-save last goal"
-                android:checked="true"
-                android:paddingVertical="8dp" />
         </LinearLayout>
     </ScrollView>
-
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

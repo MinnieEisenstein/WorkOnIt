@@ -1,5 +1,7 @@
 package com.example.workonit;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,8 +13,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.workonit.model.Goal;
+import com.example.workonit.net.ChizzukService;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
@@ -20,20 +24,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.example.workonit.net.ChizzukService;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import android.content.ClipboardManager;
-import android.content.ClipData;
-
 public class GoalDetailActivity extends AppCompatActivity {
 
     private static final String PREFS = "workonit_prefs";
     private static final String KEY_NOTES_PREFIX = "notes_";
     private static final String KEY_PROGRESS_PREFIX = "progress_";
+    private static final String KEY_WHY_PREFIX = "why_"; // NEW
 
     private Goal goal;
     private EditText etNotes;
     private CheckBox cbDoneToday;
+    private TextView tvWhy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,23 +48,31 @@ public class GoalDetailActivity extends AppCompatActivity {
 
         TextView tvName = findViewById(R.id.tv_goal_name);
         TextView tvMeta = findViewById(R.id.tv_goal_meta);
+        tvWhy = findViewById(R.id.tv_why);
         etNotes = findViewById(R.id.et_notes);
         cbDoneToday = findViewById(R.id.cb_done_today);
         MaterialButton btnChizzuk = findViewById(R.id.btn_chizzuk);
         MaterialButton btnRate = findViewById(R.id.btn_rate_progress);
-        MaterialButton btnCalendar = findViewById(R.id.btn_view_calendar); // ✅ new button
+        MaterialButton btnCalendar = findViewById(R.id.btn_view_calendar);
 
         if (goal != null) {
             tvName.setText(goal.name);
 
             String typeText = (goal.type == Goal.Type.POSITIVE) ? "positive" : "negative";
-            String freqText = (goal.timesPerWeek > 0) ? (goal.timesPerWeek + "/week") : "no target";
             String dateText = DateFormat.getDateInstance().format(new Date(goal.createdAtUtc));
+            tvMeta.setText(typeText + " • created " + dateText);
 
-            tvMeta.setText(typeText + " • " + freqText + " • created " + dateText);
-
-            // restore notes + checkbox state
             SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+
+            // load WHY (pretty text)
+            String savedWhy = prefs.getString(KEY_WHY_PREFIX + goal.name, "");
+            if (savedWhy == null || savedWhy.trim().isEmpty()) {
+                tvWhy.setText("—");
+            } else {
+                tvWhy.setText(savedWhy.trim());
+            }
+
+            // restore notes + checkbox
             String savedNotes = prefs.getString(KEY_NOTES_PREFIX + goal.name, "");
             etNotes.setText(savedNotes);
 
@@ -90,7 +99,7 @@ public class GoalDetailActivity extends AppCompatActivity {
             }
         });
 
-        // ai chizzuk button → stub (next step will call api)
+        // ai chizzuk button
         btnChizzuk.setOnClickListener(v -> startGenerateChizzuk(v));
 
         btnRate.setOnClickListener(v -> {
@@ -121,7 +130,6 @@ public class GoalDetailActivity extends AppCompatActivity {
         return new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
     }
 
-    // stub for ai chizzuk – next step we’ll do the network call here
     private void startGenerateChizzuk(View anchor) {
         MaterialButton btn = findViewById(R.id.btn_chizzuk);
         btn.setEnabled(false);
@@ -170,7 +178,6 @@ public class GoalDetailActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (goal != null && etNotes != null) {
-            // ensure latest text is persisted even if user hits back immediately
             saveNotes();
         }
     }

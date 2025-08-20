@@ -17,9 +17,7 @@
         <activity
             android:name=".FilteredGoalsActivity"
             android:exported="false" />
-        <activity
-            android:name=".QuoteUtils"
-            android:exported="false" />
+
         <activity
             android:name=".ProgressCalendarActivity"
             android:exported="false" />

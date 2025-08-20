@@ -10,16 +10,23 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    // prefs keys
+    // prefs bucket
     private static final String PREFS = "workonit_prefs";
+
+    // quote mode keys (kept same names for compatibility)
     private static final String PREF_HOURLY_QUOTES = "pref_hourly_quotes";
     private static final String PREF_DAILY_QUOTE  = "pref_daily_quote";
-    private static final String PREF_AUTOSAVE     = "pref_autosave";
+
+    // quote cache keys (so MainActivity fetches a fresh one after change)
+    private static final String PREF_QUOTE_CACHE_TEXT = "quote_cache_text";
+    private static final String PREF_QUOTE_CACHE_KEY  = "quote_cache_key";
 
     // ui
     private MaterialSwitch switchHourly;
     private MaterialSwitch switchDaily;
-    private MaterialSwitch switchAutosave;
+
+    // prevent infinite toggle loops
+    private boolean isUpdatingSwitches = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,39 +42,80 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         // find switches
-        switchHourly   = findViewById(R.id.switch_hourly_quotes);
-        switchDaily    = findViewById(R.id.switch_daily_quote);
-        switchAutosave = findViewById(R.id.switch_autosave);
+        switchHourly = findViewById(R.id.switch_hourly_quotes);
+        switchDaily  = findViewById(R.id.switch_daily_quote);
 
-        // load once
+        // load prefs
         SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
-        boolean hourly   = prefs.getBoolean(PREF_HOURLY_QUOTES, false);
-        boolean daily    = prefs.getBoolean(PREF_DAILY_QUOTE,  true);
-        boolean autosave = prefs.getBoolean(PREF_AUTOSAVE,     true);
+        boolean hourly = prefs.getBoolean(PREF_HOURLY_QUOTES, false);
+        boolean daily  = prefs.getBoolean(PREF_DAILY_QUOTE,  true);
 
-        // set initial ui state
+        // normalize: if both same, default to daily
+        if (hourly == daily) {
+            hourly = false;
+            daily  = true;
+            prefs.edit()
+                    .putBoolean(PREF_HOURLY_QUOTES, false)
+                    .putBoolean(PREF_DAILY_QUOTE, true)
+                    .apply();
+        }
+
+        // set initial ui
         switchHourly.setChecked(hourly);
         switchDaily.setChecked(daily);
-        switchAutosave.setChecked(autosave);
 
-        // save on toggle
-        switchHourly.setOnCheckedChangeListener((btn, isChecked) ->
-                getSharedPreferences(PREFS, MODE_PRIVATE).edit()
-                        .putBoolean(PREF_HOURLY_QUOTES, isChecked)
-                        .apply()
-        );
+        // listeners (mutually exclusive)
+        switchHourly.setOnCheckedChangeListener((btn, isChecked) -> {
+            if (isUpdatingSwitches) return;
+            isUpdatingSwitches = true;
 
-        switchDaily.setOnCheckedChangeListener((btn, isChecked) ->
-                getSharedPreferences(PREFS, MODE_PRIVATE).edit()
-                        .putBoolean(PREF_DAILY_QUOTE, isChecked)
-                        .apply()
-        );
+            SharedPreferences p = getSharedPreferences(PREFS, MODE_PRIVATE);
+            if (isChecked) {
+                switchDaily.setChecked(false);
+                p.edit()
+                        .putBoolean(PREF_HOURLY_QUOTES, true)
+                        .putBoolean(PREF_DAILY_QUOTE, false)
+                        .remove(PREF_QUOTE_CACHE_KEY)
+                        .remove(PREF_QUOTE_CACHE_TEXT)
+                        .apply();
+            } else {
+                switchDaily.setChecked(true);
+                p.edit()
+                        .putBoolean(PREF_HOURLY_QUOTES, false)
+                        .putBoolean(PREF_DAILY_QUOTE, true)
+                        .remove(PREF_QUOTE_CACHE_KEY)
+                        .remove(PREF_QUOTE_CACHE_TEXT)
+                        .apply();
+            }
 
-        switchAutosave.setOnCheckedChangeListener((btn, isChecked) ->
-                getSharedPreferences(PREFS, MODE_PRIVATE).edit()
-                        .putBoolean(PREF_AUTOSAVE, isChecked)
-                        .apply()
-        );
+            isUpdatingSwitches = false;
+        });
+
+        switchDaily.setOnCheckedChangeListener((btn, isChecked) -> {
+            if (isUpdatingSwitches) return;
+            isUpdatingSwitches = true;
+
+            SharedPreferences p = getSharedPreferences(PREFS, MODE_PRIVATE);
+            if (isChecked) {
+                switchHourly.setChecked(false);
+                p.edit()
+                        .putBoolean(PREF_DAILY_QUOTE, true)
+                        .putBoolean(PREF_HOURLY_QUOTES, false)
+                        .remove(PREF_QUOTE_CACHE_KEY)
+                        .remove(PREF_QUOTE_CACHE_TEXT)
+                        .apply();
+            } else {
+                switchHourly.setChecked(true);
+                p.edit()
+                        .putBoolean(PREF_DAILY_QUOTE, false)
+                        .putBoolean(PREF_HOURLY_QUOTES, true)
+                        .remove(PREF_QUOTE_CACHE_KEY)
+                        .remove(PREF_QUOTE_CACHE_TEXT)
+                        .apply();
+            }
+
+            isUpdatingSwitches = false;
+        });
     }
 
     @Override

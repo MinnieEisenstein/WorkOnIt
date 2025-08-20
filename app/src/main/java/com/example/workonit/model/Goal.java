@@ -8,27 +8,18 @@ import java.util.UUID;
 public class Goal implements Serializable {
 
     public enum Type { POSITIVE, NEGATIVE }
-
     // lifecycle status for color-coding & actions
     public enum Status { ACTIVE, ON_HOLD, COMPLETED, EXPIRED }
-
     public final String id;
     public final String name;
     public final Type type;
     public final int timesPerWeek;   // 0 means not specified yet
     public final long createdAtUtc;  // epoch millis
-
-    // NEW: optional end date for this goal (epoch millis). If null/0 → no end.
     public Long dueAtUtc = null;
-
-    // NEW: if true and now > dueAtUtc, auto-mark as EXPIRED
     public boolean autoExpire = true;
-
     // current status (default ACTIVE)
     public Status status = Status.ACTIVE;
-
     public String notes = ""; // freeform notes
-
     // map of date string (e.g. "2025-08-17") to a progress entry
     public final Map<String, ProgressEntry> progress = new HashMap<>();
 
@@ -39,19 +30,16 @@ public class Goal implements Serializable {
         this.timesPerWeek = timesPerWeek;
         this.createdAtUtc = createdAtUtc;
     }
-
     // ---- convenience setters we’ll call from the UI actions
     public void markActive()    { this.status = Status.ACTIVE; }
     public void markOnHold()    { this.status = Status.ON_HOLD; }
     public void markCompleted() { this.status = Status.COMPLETED; }
     public void markExpired()   { this.status = Status.EXPIRED; }
-
-    // ---- helpers for expiry ----
+    // ---- helpers for expiration ----
     /** Returns true if this goal has a due date and it's in the past (nowUtc > dueAtUtc). */
     public boolean isPastDue(long nowUtc) {
         return autoExpire && dueAtUtc != null && dueAtUtc > 0 && nowUtc > dueAtUtc;
     }
-
     /** If past due, flip status to EXPIRED (idempotent). Returns true if changed. */
     public boolean expireIfNeeded(long nowUtc) {
         if (isPastDue(nowUtc) && status != Status.EXPIRED && status != Status.COMPLETED) {
@@ -60,7 +48,6 @@ public class Goal implements Serializable {
         }
         return false;
     }
-
     // nested helper class for ratings
     public static class ProgressEntry implements Serializable {
         public int effort;

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- app bar with toolbar -->
+    <!-- App bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -22,14 +22,15 @@
             app:titleTextColor="@android:color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- content under app bar -->
+    <!-- Content under app bar -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:padding="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- guideline marking 25% height for quote -->
+        <!-- 25% top guide for quote -->
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_25"
             android:layout_width="wrap_content"
@@ -37,7 +38,7 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.25" />
 
-        <!-- quote area (top quarter) -->
+        <!-- Quote card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/quote_card"
             android:layout_width="0dp"
@@ -46,6 +47,9 @@
             app:cardUseCompatPadding="true"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
+            app:strokeColor="#FFE2EC"
+            app:strokeWidth="1dp"
+            app:cardBackgroundColor="#FFF8FB"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/guideline_25"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,15 +59,18 @@
                 android:id="@+id/quote_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="16dp"
-                android:text="Loading quote…"
-                android:textSize="18sp"
-                android:textStyle="italic"
+                android:padding="22dp"
                 android:gravity="center"
-                android:lineSpacingExtra="2dp" />
+                android:text="Loading quote…"
+                android:textSize="22sp"
+                android:lineSpacingExtra="6dp"
+                android:letterSpacing="0.02"
+                android:textColor="#2E2A2A"
+                android:textStyle="italic"
+                android:fontFamily="cursive" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- bottom button bar (category shortcuts) -->
+        <!-- Bottom category buttons -->
         <LinearLayout
             android:id="@+id/category_buttons"
             android:layout_width="0dp"
@@ -106,7 +113,7 @@
                 android:textAllCaps="false" />
         </LinearLayout>
 
-        <!-- list below quote, above buttons -->
+        <!-- ACTIVE goals list (between quote and buttons) -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_goals"
             android:layout_width="0dp"
@@ -115,15 +122,12 @@
             app:layout_constraintBottom_toTopOf="@id/category_buttons"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:scrollbars="vertical"
             android:clipToPadding="false"
             android:paddingBottom="16dp"
-
             tools:listitem="@layout/row_goal" />
 
-        <!-- empty state centered inside the list area -->
+        <!-- Empty state -->
         <TextView
             android:id="@+id/empty_view"
             android:layout_width="wrap_content"
@@ -135,7 +139,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- BIG add goal button (Extended FAB) -->
+        <!-- BIG Add Goal (Extended FAB) -->
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab_add"
             android:layout_width="wrap_content"

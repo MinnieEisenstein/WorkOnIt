@@ -36,8 +36,44 @@
                 android:id="@+id/tv_goal_meta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="type • freq • created"
+                android:text="type • created"
                 android:layout_marginTop="8dp" />
+
+            <!-- pretty WHY block -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_why"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_why_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="my why"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_why"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="—"
+                        android:textSize="20sp"
+                        android:fontFamily="cursive"
+                        android:lineSpacingExtra="4dp"
+                        android:alpha="0.95" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:id="@+id/tv_notes_label"
@@ -50,11 +86,10 @@
             <EditText
                 android:id="@+id/et_notes"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="120dp"
                 android:gravity="top"
                 android:hint="Write your notes here..." />
 
-            <!-- ✅ new checkbox -->
             <CheckBox
                 android:id="@+id/cb_done_today"
                 android:layout_width="match_parent"
@@ -62,7 +97,6 @@
                 android:layout_marginTop="16dp"
                 android:text="Did you achieve today’s goal?" />
 
-            <!-- ✅ new button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_rate_progress"
                 android:layout_width="match_parent"
@@ -83,8 +117,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="Get Chizzuk 💪" />
-
-
         </LinearLayout>
     </ScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

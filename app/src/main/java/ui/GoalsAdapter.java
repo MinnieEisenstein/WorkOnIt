@@ -38,7 +38,6 @@ public class GoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM   = 1;
 
-    // single backing list that mixes headers + items
     private final List<Row> rows = new ArrayList<>();
     private OnGoalClick onGoalClick;
     private OnGoalAction onGoalAction;
@@ -46,12 +45,6 @@ public class GoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void setOnGoalClick(OnGoalClick listener) { this.onGoalClick = listener; }
     public void setOnGoalAction(OnGoalAction listener) { this.onGoalAction = listener; }
 
-    /**
-     * Submit ALL goals. Adapter will:
-     * - keep only ACTIVE + ON_HOLD for main screen
-     * - add "Active" header (if any), then "On hold" header (if any)
-     * - sort inside each section by created date (newest first)
-     */
     public void submitList(List<Goal> goals) {
         rows.clear();
         if (goals == null) {
@@ -66,10 +59,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             Goal.Status s = (g.status != null) ? g.status : Goal.Status.ACTIVE;
             if (s == Goal.Status.ACTIVE) active.add(g);
             else if (s == Goal.Status.ON_HOLD) onHold.add(g);
-            // COMPLETED / EXPIRED are intentionally ignored here (separate screen)
         }
 
-        // newest first inside each section
         Collections.sort(active, (a, b) -> Long.compare(b.createdAtUtc, a.createdAtUtc));
         Collections.sort(onHold, (a, b) -> Long.compare(b.createdAtUtc, a.createdAtUtc));
 
@@ -148,11 +139,10 @@ public class GoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             // title
             tvTitle.setText(g.name);
 
-            // meta
+            // meta (REMOVED weekly target)
             String typeText = (g.type == Goal.Type.POSITIVE) ? "positive" : "negative";
-            String freqText = (g.timesPerWeek > 0) ? (g.timesPerWeek + "/week") : "no target yet";
             String dateText = DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date(g.createdAtUtc));
-            tvMeta.setText(typeText + " • " + freqText + " • created " + dateText);
+            tvMeta.setText(typeText + " • created " + dateText);
 
             // status pill + card stroke
             Goal.Status status = (g.status != null) ? g.status : Goal.Status.ACTIVE;
@@ -191,8 +181,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // ---- row model ----
     private static class Row {
         final boolean isHeader;
-        final String headerTitle; // when header
-        final Goal goal;          // when item
+        final String headerTitle;
+        final Goal goal;
 
         private Row(boolean isHeader, String headerTitle, Goal goal) {
             this.isHeader = isHeader;

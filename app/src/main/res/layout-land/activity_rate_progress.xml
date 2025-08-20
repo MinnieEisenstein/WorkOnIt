@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_rate"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:title="Rate Progress"
+        app:titleTextColor="@android:color/white"
+        app:navigationIcon="?attr/homeAsUpIndicator" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_goal_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rate Progress"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- row 1: difficulty -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/label_difficulty"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="How difficult was it today?"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/sb_difficulty" />
+
+                <TextView
+                    android:id="@+id/tv_difficulty_val"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textAlignment="viewEnd"
+                    android:gravity="end"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <SeekBar
+                    android:id="@+id/sb_difficulty"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:max="10"
+                    app:layout_constraintStart_toEndOf="@id/label_difficulty"
+                    app:layout_constraintEnd_toStartOf="@id/tv_difficulty_val"
+                    app:layout_constraintTop_toBottomOf="@id/label_difficulty"
+                    app:layout_constraintWidth_percent="0.55" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- row 2: motivation -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/label_motivation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="How motivated did you feel?"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/sb_motivation" />
+
+                <TextView
+                    android:id="@+id/tv_motivation_val"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textAlignment="viewEnd"
+                    android:gravity="end"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <SeekBar
+                    android:id="@+id/sb_motivation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:max="10"
+                    app:layout_constraintStart_toEndOf="@id/label_motivation"
+                    app:layout_constraintEnd_toStartOf="@id/tv_motivation_val"
+                    app:layout_constraintTop_toBottomOf="@id/label_motivation"
+                    app:layout_constraintWidth_percent="0.55" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- row 3: success -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/label_success"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="How successful were you?"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/sb_success" />
+
+                <TextView
+                    android:id="@+id/tv_success_val"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textAlignment="viewEnd"
+                    android:gravity="end"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <SeekBar
+                    android:id="@+id/sb_success"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:max="10"
+                    app:layout_constraintStart_toEndOf="@id/label_success"
+                    app:layout_constraintEnd_toStartOf="@id/tv_success_val"
+                    app:layout_constraintTop_toBottomOf="@id/label_success"
+                    app:layout_constraintWidth_percent="0.55" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_submit_rating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Progress"
+                android:layout_marginTop="20dp" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
